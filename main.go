@@ -1,14 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
+	"github.com/KyriakosMilad/go-rest-cms/helpers"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
-	"os"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +21,7 @@ func main() {
 	}
 
 	// connect to to the database
-	DB, err := sql.Open("mysql", os.Getenv("DB_USER")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_HOST")+")/"+os.Getenv("DB_NAME"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(DB)
+	helpers.SetupDatabase()
 
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":3000", nil))
