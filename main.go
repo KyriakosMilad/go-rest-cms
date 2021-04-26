@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/KyriakosMilad/go-rest-cms/helpers"
+	"github.com/KyriakosMilad/go-rest-cms/database"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// connect to to the database
-	helpers.SetupDatabase()
+	database.SetupDatabase()
 
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":3000", nil))
