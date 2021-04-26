@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/KyriakosMilad/go-rest-cms/database"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
