@@ -39,3 +39,15 @@ func CreateTable(v interface{ GetTable() string }) (err error) {
 	fmt.Println(v.GetTable() + " migrated successfully")
 	return
 }
+
+func DropTable(v interface{ GetTable() string }) (err error) {
+	query := "DROP TABLE IF EXISTS " + v.GetTable()
+
+	_, err = DB.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(v.GetTable() + " dropped successfully")
+	return
+}

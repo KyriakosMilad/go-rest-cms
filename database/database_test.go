@@ -56,3 +56,23 @@ func TestCreateTable(t *testing.T) {
 		})
 	}
 }
+
+func TestDropTable(t *testing.T) {
+	type args struct {
+		v interface{ GetTable() string }
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{name: "drop table", args: args{test{}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := DropTable(tt.args.v)
+			if err != nil {
+				t.Error(err.Error(), tt.args)
+			}
+		})
+	}
+}
