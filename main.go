@@ -20,7 +20,10 @@ func main() {
 	}
 
 	// connect to to the database
-	database.SetupDatabase()
+	err = database.SetupDatabase()
+	if err != nil {
+		log.Fatal("Error connecting to the database: " + err.Error())
+	}
 
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":3000", nil))
