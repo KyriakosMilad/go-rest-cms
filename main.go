@@ -1,16 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/KyriakosMilad/go-rest-cms/database"
+	"github.com/KyriakosMilad/go-rest-cms/server"
 	"github.com/joho/godotenv"
 	"log"
-	"net/http"
 )
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-}
 
 func main() {
 	// load .env variables
@@ -25,6 +20,5 @@ func main() {
 		log.Fatal("Error connecting to the database: " + err.Error())
 	}
 
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	server.Serve()
 }
