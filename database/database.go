@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"os"
 	"reflect"
+	"time"
 )
 
 var DB *sql.DB
@@ -15,6 +16,11 @@ func SetupDatabase() (err error) {
 	if err != nil {
 		return
 	}
+
+	DB.SetConnMaxLifetime(time.Minute * 3)
+	DB.SetMaxOpenConns(10)
+	DB.SetMaxIdleConns(10)
+
 	err = DB.Ping()
 	return
 }
