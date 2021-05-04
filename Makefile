@@ -2,6 +2,5 @@ test:
 	go test ./...
 test-view:
 	go test ./... -v
-push:
-	test
+push: test
 	git push origin master
