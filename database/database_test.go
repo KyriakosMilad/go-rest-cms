@@ -25,7 +25,6 @@ func TestSetupDatabase(t *testing.T) {
 		name    string
 		wantErr bool
 	}{
-		{name: "test load .env variables", wantErr: false}, // required load env variables to run these tests
 		{name: "test connection to database", wantErr: false},
 	}
 	for _, tt := range tests {
