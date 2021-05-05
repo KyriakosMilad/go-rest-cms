@@ -2,9 +2,11 @@ package main
 
 import (
 	"github.com/KyriakosMilad/go-rest-cms/database"
+	"github.com/KyriakosMilad/go-rest-cms/schema"
 	"github.com/KyriakosMilad/go-rest-cms/server"
 	"github.com/joho/godotenv"
 	"log"
+	"os"
 )
 
 func main() {
@@ -20,5 +22,19 @@ func main() {
 		log.Fatal("Error connecting to the database: " + err.Error())
 	}
 
-	server.Serve()
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "-migrate":
+			schema.Migrate()
+		case "-drop":
+			schema.Drop()
+		case "-fresh":
+			schema.Drop()
+			schema.Migrate()
+		default:
+			server.Serve()
+		}
+	} else {
+		server.Serve()
+	}
 }
