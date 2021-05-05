@@ -7,8 +7,8 @@ import (
 )
 
 type test struct {
-	id   int64  `column:"id INT(6) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY"`
-	name string `column:"name VARCHAR(10) NOT NULL"`
+	id   int64  `db_column_name:"id" db_column_specs:"INT(6) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY"`
+	name string `db_column_name:"name" db_column_specs:"VARCHAR(10) NOT NULL"`
 }
 
 func (t test) GetTable() string {

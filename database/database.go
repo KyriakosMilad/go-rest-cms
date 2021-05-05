@@ -30,9 +30,9 @@ func CreateTable(v interface{ GetTable() string }) (err error) {
 	t := reflect.TypeOf(v)
 	for i := 0; i < t.NumField(); i++ {
 		if (t.NumField() - i) > 1 {
-			query += t.Field(i).Tag.Get("column") + ","
+			query += t.Field(i).Tag.Get("db_column_name") + " " + t.Field(i).Tag.Get("db_column_specs") + ","
 		} else {
-			query += t.Field(i).Tag.Get("column")
+			query += t.Field(i).Tag.Get("db_column_name") + " " + t.Field(i).Tag.Get("db_column_specs")
 		}
 	}
 	query += ")"
