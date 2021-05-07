@@ -23,7 +23,7 @@ func (u User) GetTable() string {
 
 func (u *User) Create() (err error) {
 	var result sql.Result
-	result, err = database.DB.Exec("INSERT INTO "+u.GetTable()+" (first_name,last_name,email,password,created_at,updated_at) VALUES (?,?,?,?,?,?)", u.FirstName, u.LastName, u.Email, u.Password, u.CreatedAt, u.UpdatedAt)
+	result, err = database.DB.Exec("INSERT INTO " + u.GetTable() + " (first_name,last_name,email,password,created_at,updated_at) VALUES (\"" + u.FirstName + "\",\"" + u.LastName + "\",\"" + u.Email + "\",\"" + u.Password + "\",\"" + u.CreatedAt.Format("2006-01-02 15:04:05") + "\",\"" + u.UpdatedAt.Format("2006-01-02 15:04:05") + "\")")
 	if err != nil {
 		return
 	}
