@@ -1,6 +1,10 @@
 package user
 
-import "time"
+import (
+	"database/sql"
+	"github.com/KyriakosMilad/go-rest-cms/database"
+	"time"
+)
 
 type User struct {
 	ID        int64     `json:"id" db_column_name:"id" db_column_specs:"INT(6) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY"`
@@ -15,4 +19,17 @@ type User struct {
 
 func (u User) GetTable() string {
 	return "users"
+}
+
+func (u *User) Create() (err error) {
+	var result sql.Result
+	result, err = database.DB.Exec("INSERT INTO "+u.GetTable()+" (first_name,last_name,email,password,created_at,updated_at) VALUES (?,?,?,?,?,?)", u.FirstName, u.LastName, u.Email, u.Password, u.CreatedAt, u.UpdatedAt)
+	if err != nil {
+		return
+	}
+	u.ID, err = result.LastInsertId()
+	if err != nil {
+		return
+	}
+	return
 }
