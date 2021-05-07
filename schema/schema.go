@@ -2,11 +2,12 @@ package schema
 
 import (
 	"github.com/KyriakosMilad/go-rest-cms/database"
+	"github.com/KyriakosMilad/go-rest-cms/user"
 	"log"
 )
 
 var schemas = []interface{ GetTable() string }{
-	// register schemas here
+	user.User{},
 }
 
 func Migrate() {
