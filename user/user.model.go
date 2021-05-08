@@ -161,3 +161,8 @@ func (u *User) SoftDelete() (err error) {
 
 	return
 }
+
+func (u *User) Delete() (err error) {
+	_, err = database.DB.Exec("DELETE FROM " + u.GetTable() + " WHERE id = " + strconv.FormatInt(u.ID, 10))
+	return
+}
