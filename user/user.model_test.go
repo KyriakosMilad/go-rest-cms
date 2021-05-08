@@ -127,3 +127,22 @@ func TestUser_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_SoftDelete(t *testing.T) {
+	tests := []struct {
+		name    string
+		wantErr bool
+	}{
+		{
+			name:    "test soft delete user",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := u.SoftDelete(); (err != nil) != tt.wantErr {
+				t.Errorf("SoftDelete() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

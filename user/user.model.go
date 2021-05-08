@@ -148,3 +148,16 @@ func (u *User) Update() (err error) {
 
 	return
 }
+
+func (u *User) SoftDelete() (err error) {
+	deletedAt := time.Now()
+
+	_, err = database.DB.Exec("UPDATE " + u.GetTable() + " SET deleted_at = \"" + deletedAt.Format("2006-01-02 15:04:05") + "\"" + " WHERE id = " + strconv.FormatInt(u.ID, 10))
+	if err != nil {
+		return
+	}
+
+	u.DeletedAt = deletedAt
+
+	return
+}
