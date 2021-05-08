@@ -73,3 +73,37 @@ func TestUser_FindOne(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_FindAll(t *testing.T) {
+	type args struct {
+		conditions map[string]string
+		limit      int
+		offset     int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "test find all users",
+			args: args{
+				conditions: map[string]string{},
+				limit:      10,
+				offset:     0,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err, users := u.FindAll(tt.args.conditions, tt.args.limit, tt.args.offset)
+			if err != nil {
+				t.Errorf("FindAll() err = %v, want %v", err, tt.wantErr)
+			}
+			if len(users) == 0 {
+				t.Errorf("FindAll() return zero results, 1 expected at least")
+			}
+		})
+	}
+}

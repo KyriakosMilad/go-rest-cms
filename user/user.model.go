@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/KyriakosMilad/go-rest-cms/database"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -76,5 +77,61 @@ func (u *User) FindOne(conditions map[string]string) (err error) {
 	}
 
 	err = database.DB.QueryRow(query).Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt)
+	return
+}
+
+func (u *User) FindAll(conditions map[string]string, limit int, offset int) (err error, users []User) {
+	query := "SELECT id,first_name,last_name,email,password,created_at,updated_at FROM " + u.GetTable() + " WHERE deleted_at IS NULL"
+
+	// parse conditions and add them to query
+	v := reflect.ValueOf(u)
+	t := reflect.TypeOf(u)
+	for key, val := range conditions {
+		// get field
+		f := reflect.Indirect(v).FieldByName(key)
+		if !f.IsValid() {
+			err = fmt.Errorf("user schema does not have the field `%s`", key)
+			return
+		}
+
+		// get tag db_column_name from field
+		field, ok := t.Elem().FieldByName(key)
+		if !ok {
+			err = fmt.Errorf("user schema does not have the field `%s`", key)
+			return
+		}
+		column := field.Tag.Get("db_column_name")
+
+		// parse field value
+		var fVal string
+		if reflect.TypeOf(f) == reflect.TypeOf(time.Now()) {
+			fVal = f.Interface().(time.Time).Format("2006-01-02 15:04:05")
+		} else {
+			fVal = fmt.Sprintf("%v", f)
+		}
+
+		query += " AND " + column + " " + val + " \"" + fVal + "\""
+	}
+
+	// pagination
+	query += " LIMIT " + strconv.Itoa(limit) + " OFFSET " + strconv.Itoa(offset)
+
+	// get results
+	var results *sql.Rows
+	results, err = database.DB.Query(query)
+	if err != nil {
+		return
+	}
+	defer results.Close()
+
+	// append results to users
+	for results.Next() {
+		err = results.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt)
+		if err != nil {
+			return
+		}
+		users = append(users, *u)
+	}
+
 	return
 }
