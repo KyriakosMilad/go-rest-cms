@@ -135,3 +135,16 @@ func (u *User) FindAll(conditions map[string]string, limit int, offset int) (err
 
 	return
 }
+
+func (u *User) Update() (err error) {
+	updatedAt := time.Now()
+
+	_, err = database.DB.Exec("UPDATE " + u.GetTable() + " SET first_name = \"" + u.FirstName + "\"" + ", last_name = \"" + u.LastName + "\"" + ", email = \"" + u.Email + "\"" + ", password = \"" + u.Password + "\"" + ", updated_at = \"" + updatedAt.Format("2006-01-02 15:04:05") + "\"" + " WHERE id = " + strconv.FormatInt(u.ID, 10))
+	if err != nil {
+		return
+	}
+
+	u.UpdatedAt = updatedAt
+
+	return
+}

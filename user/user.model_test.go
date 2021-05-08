@@ -107,3 +107,23 @@ func TestUser_FindAll(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_Update(t *testing.T) {
+	tests := []struct {
+		name    string
+		wantErr bool
+	}{
+		{
+			name:    "test update user",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u.FirstName = "Kero"
+			if err := u.Update(); (err != nil) != tt.wantErr {
+				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
