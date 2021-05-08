@@ -26,11 +26,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestSetupDatabase(t *testing.T) {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Fatalln(".env variables is needed to run database tests, error : " + err.Error())
-	}
-
 	tests := []struct {
 		name    string
 		wantErr bool
