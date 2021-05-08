@@ -49,3 +49,27 @@ func TestUser_Create(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_FindOne(t *testing.T) {
+	type args struct {
+		conditions map[string]string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "test find user by id",
+			args:    args{map[string]string{"ID": "="}},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := u.FindOne(tt.args.conditions); (err != nil) != tt.wantErr {
+				t.Errorf("FindOne() error = %v, wantErr %v, args %v", err, tt.wantErr, tt.args.conditions)
+			}
+		})
+	}
+}

@@ -2,7 +2,9 @@ package user
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/KyriakosMilad/go-rest-cms/database"
+	"reflect"
 	"time"
 )
 
@@ -13,7 +15,7 @@ type User struct {
 	Email     string    `json:"email"  db_column_name:"email" db_column_specs:"VARCHAR(255) NOT NULL UNIQUE"`
 	Password  string    `json:"password"  db_column_name:"password" db_column_specs:"VARCHAR(255) NOT NULL"`
 	CreatedAt time.Time `json:"created_at" db_column_name:"created_at" db_column_specs:"TIMESTAMP NOT NULL"`
-	UpdatedAt time.Time `json:"updated_at" db_column_name:"updated_at" db_column_specs:"TIMESTAMP"`
+	UpdatedAt time.Time `json:"updated_at" db_column_name:"updated_at" db_column_specs:"TIMESTAMP NOT NULL"`
 	DeletedAt time.Time `json:"deleted_at" db_column_name:"deleted_at" db_column_specs:"TIMESTAMP"`
 }
 
@@ -22,10 +24,10 @@ func (u User) GetTable() string {
 }
 
 func (u *User) Create() (err error) {
-	createdAt := time.Now()
+	timeNow := time.Now()
 
 	var result sql.Result
-	result, err = database.DB.Exec("INSERT INTO " + u.GetTable() + " (first_name,last_name,email,password,created_at) VALUES (\"" + u.FirstName + "\",\"" + u.LastName + "\",\"" + u.Email + "\",\"" + u.Password + "\",\"" + createdAt.Format("2006-01-02 15:04:05") + "\")")
+	result, err = database.DB.Exec("INSERT INTO " + u.GetTable() + " (first_name,last_name,email,password,updated_at,created_at) VALUES (\"" + u.FirstName + "\",\"" + u.LastName + "\",\"" + u.Email + "\",\"" + u.Password + "\",\"" + timeNow.Format("2006-01-02 15:04:05") + "\",\"" + timeNow.Format("2006-01-02 15:04:05") + "\")")
 	if err != nil {
 		return
 	}
@@ -35,7 +37,44 @@ func (u *User) Create() (err error) {
 		return
 	}
 
-	u.CreatedAt = createdAt
+	u.CreatedAt = timeNow
+	u.UpdatedAt = timeNow
 
+	return
+}
+
+func (u *User) FindOne(conditions map[string]string) (err error) {
+	query := "SELECT id,first_name,last_name,email,password,created_at,updated_at FROM " + u.GetTable() + " WHERE deleted_at IS NULL"
+
+	v := reflect.ValueOf(u)
+	t := reflect.TypeOf(u)
+	for key, val := range conditions {
+		// get field
+		f := reflect.Indirect(v).FieldByName(key)
+		if !f.IsValid() {
+			err = fmt.Errorf("user schema does not have the field `%s`", key)
+			return
+		}
+
+		// get tag db_column_name from field
+		field, ok := t.Elem().FieldByName(key)
+		if !ok {
+			err = fmt.Errorf("user schema does not have the field `%s`", key)
+			return
+		}
+		column := field.Tag.Get("db_column_name")
+
+		// parse field value
+		var fVal string
+		if reflect.TypeOf(f) == reflect.TypeOf(time.Now()) {
+			fVal = f.Interface().(time.Time).Format("2006-01-02 15:04:05")
+		} else {
+			fVal = fmt.Sprintf("%v", f)
+		}
+
+		query += " AND " + column + " " + val + " \"" + fVal + "\""
+	}
+
+	err = database.DB.QueryRow(query).Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt)
 	return
 }
