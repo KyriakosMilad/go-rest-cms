@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"os"
@@ -26,8 +27,12 @@ func SetupDatabase() (err error) {
 }
 
 func CreateTable(v interface{ GetTable() string }) (err error) {
-	query := "CREATE TABLE IF NOT EXISTS " + v.GetTable() + "("
 	t := reflect.TypeOf(v)
+	if t.Kind() != reflect.TypeOf(struct{}{}).Kind() {
+		return errors.New("can only proceed `struct` kind")
+	}
+
+	query := "CREATE TABLE IF NOT EXISTS " + v.GetTable() + "("
 	for i := 0; i < t.NumField(); i++ {
 		if t.Field(i).Tag.Get("db_column_name") == "" || t.Field(i).Tag.Get("db_column_specs") == "" {
 			continue
