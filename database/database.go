@@ -39,8 +39,10 @@ func CreateTable(v interface{ GetTable() string }) (err error) {
 		}
 		query += t.Field(i).Tag.Get("db_column_name") + " " + t.Field(i).Tag.Get("db_column_specs") + ","
 	}
-	// remove last comma and close query
-	query = query[:len(query)-1]
+	// remove last comma if exists and close query
+	if query[len(query)-1] == ',' {
+		query = query[:len(query)-1]
+	}
 	query += ")"
 
 	_, err = DB.Exec(query)
