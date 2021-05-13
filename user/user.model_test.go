@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 		log.Fatalln(".env variables is needed to run database tests, error : " + err.Error())
 	}
 
-	// connect to to the database
+	// connect to the database
 	err = database.SetupDatabase()
 	if err != nil {
 		log.Fatal("Error connecting to the database: " + err.Error())
