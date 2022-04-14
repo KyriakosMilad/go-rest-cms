@@ -2,15 +2,15 @@ package server
 
 import (
 	"fmt"
+	"github.com/KyriakosMilad/go-rest-cms/user"
 	"log"
 	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-}
-
 func Serve() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "hi")
+	})
+	user.RegisterRoutes()
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
